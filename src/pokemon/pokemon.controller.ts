@@ -7,28 +7,14 @@ import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 export class PokemonController {
   constructor(private readonly pokemonService: PokemonService) {}
 
-  @Post()
-  create(@Body() createPokemonDto: CreatePokemonDto) {
-    return this.pokemonService.create(createPokemonDto);
+  @Get("riddle")
+  CreateRiddle() {
+    return this.pokemonService.CreateRiddle();
   }
 
-  @Get()
-  findAll() {
-    return this.pokemonService.findAll();
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updatePokemonDto: UpdatePokemonDto) {
+  //   return this.pokemonService.update(+id, updatePokemonDto);
+  // }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.pokemonService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePokemonDto: UpdatePokemonDto) {
-    return this.pokemonService.update(+id, updatePokemonDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.pokemonService.remove(+id);
-  }
 }
