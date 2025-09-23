@@ -1,0 +1,64 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/postgres
+{
+	"name": "APIRest_ecommerce_roles_nest-js",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "nest-dev",
+	"workspaceFolder": "/workspaces",
+	"postCreateCommand": [],
+	"postAttachCommand": "",
+	"postStartCommand": "npm i && npm run start:dev",
+	"features": {
+		"ghcr.io/devcontainers/features/common-utils:2": {},
+		"ghcr.io/devcontainers-extra/features/nestjs-cli:2": {},
+		"ghcr.io/devcontainers/features/git:1": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				// Typescript
+				"pmneo.tsimporter",
+				"yoavbls.pretty-ts-errors",
+				// nest
+				"imgildev.vscode-nestjs-snippets-extension",
+				"imgildev.vscode-nestjs-typeorm-snippets",
+				"imgildev.vscode-nestjs-swagger-snippets",
+				"imgildev.vscode-nestjs-generator",
+				//-
+				"EchoAPI.echoapi-for-vscode",//echoapi postman
+				"ms-ossdata.vscode-pgsql",//db
+				//-
+				"PKief.material-icon-theme",
+				"christian-kohler.npm-intellisense",
+				"streetsidesoftware.code-spell-checker",
+				"chrisvltn.log-wrapper-for-vscode",
+				"ms-azuretools.vscode-containers",
+				"eamodio.gitlens",
+				"redhat.vscode-yaml",
+				"jeff-hykin.better-dockerfile-syntax",
+				"imgildev.vscode-json-flow",
+				"esbenp.prettier-vscode"
+			],
+			"settings": {
+				"workbench.iconTheme": "material-icon-theme",
+				"material-icon-theme.folders.theme": "specific",
+				"material-icon-theme.activeIconPack": "nest",
+				"typescript.tsserver.watchOptions": "vscode",
+				"workbench.colorTheme": "Default Dark Modern",
+				"editor.defaultFormatter": "esbenp.prettier-vscode",
+				"material-icon-theme.enableLogging": true
+			}
+		}
+	},
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// This can be used to network with other containers or the host.
+	"forwardPorts": [
+		3000
+	]
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "pip install --user -r requirements.txt",
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
