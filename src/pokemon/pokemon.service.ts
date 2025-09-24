@@ -1,17 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { IaService } from '../ia/ia.service';
 import { v4 as uuidv4 } from 'uuid';
-import { options } from 'axios';
+import { GameStore } from './gameStore';
 const maxIdPokemon: number = 1024;
 @Injectable()
 export class PokemonService {
   constructor(
     private readonly http: HttpService,
     private readonly iaService: IaService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly gameStore: GameStore,
+
   ) {}
 
   async CreateRiddle() {
@@ -33,12 +33,12 @@ export class PokemonService {
         weight: p.weight,
         types: p.types.map((t) => t.type.name),
         sprite: p.sprites.front_default,
-        hp:p.stats[0].base_stat,
-        attack:p.stats[1].base_stat,
-        defense:p.stats[2].base_stat,
-        specialAttack:p.stats[3].base_stat,
-        specialDefense:p.stats[4].base_stat,
-        speed:p.stats[5].base_stat
+        hp: p.stats[0].base_stat,
+        attack: p.stats[1].base_stat,
+        defense: p.stats[2].base_stat,
+        specialAttack: p.stats[3].base_stat,
+        specialDefense: p.stats[4].base_stat,
+        speed: p.stats[5].base_stat,
       };
     });
 
@@ -46,18 +46,19 @@ export class PokemonService {
       await this.iaService.createPokemonRiddleFromList(pokemons);
     const gameId = uuidv4();
 
-    await this.cacheManager.set(gameId, {
+    await this.gameStore.set(gameId, {
       answer: geminiData.answer,
     });
+
+    
 
     const optionsFull = pokemons.filter((pokemon) =>
       geminiData.options.includes(pokemon.id),
     );
 
-    console.log({ optionsFull });
-
     return {
       gameId,
+      answer: geminiData.answer,
       riddle: geminiData.riddle,
       options: optionsFull,
     };
@@ -72,5 +73,21 @@ export class PokemonService {
     }
 
     return ids;
+  }
+
+  async validateAnswer(gameId: string, pokemonId: number) {
+    const game = await this.gameStore.get(gameId);
+
+    if (!game) {
+      throw new NotFoundException('Game not found or expired');
+    }
+
+    const correct = pokemonId === game.answer;
+    return {
+      gameId,
+      selected: pokemonId,
+      correctAnswer: game.answer,
+      correct,
+    };
   }
 }

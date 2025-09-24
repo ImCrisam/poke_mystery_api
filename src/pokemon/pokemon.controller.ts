@@ -12,9 +12,11 @@ export class PokemonController {
     return this.pokemonService.CreateRiddle();
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updatePokemonDto: UpdatePokemonDto) {
-  //   return this.pokemonService.update(+id, updatePokemonDto);
-  // }
+  @Post('validate')
+  async validateAnswer(
+    @Body() body: { gameId: string; pokemonId: number },
+  ) {
+    return this.pokemonService.validateAnswer(body.gameId, body.pokemonId);
+  }
 
 }
