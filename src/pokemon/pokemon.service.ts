@@ -2,11 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
+import { IaService } from '../ia/ia.service';
 const maxIdPokemon:number = 1024
 @Injectable()
 export class PokemonService {
 
-  constructor(private readonly http: HttpService) {}
+  constructor(private readonly http: HttpService, private readonly iaService:IaService) {}
   
 
   async CreateRiddle() {
@@ -26,12 +27,13 @@ export class PokemonService {
         height: p.height,
         weight: p.weight,
         types: p.types.map((t) => t.type.name),
-        abilities: p.abilities.map((a) => a.ability.name),
         sprite: p.sprites.front_default,
       };
     });
-    console.log({pokemons})
-    return pokemons
+
+    const responde = this.iaService.createPokemonRiddleFromList(pokemons);
+    
+    return 
   }
 
 
