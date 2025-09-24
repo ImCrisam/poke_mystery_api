@@ -19,7 +19,7 @@ export class IaService {
 
   async createPokemonRiddleFromList(pokemons: any[]): Promise<any> {
     const prompt = `
-    Tienes la siguiente lista de 12 Pokémon con información básica:
+    Tienes la siguiente lista de Pokémon con información básica:
 
     ${pokemons
       .map(
@@ -29,6 +29,7 @@ export class IaService {
       Tipos: ${p.types.join(', ')}
       Peso: ${p.weight}
       Altura: ${p.height}
+      Estadisticas: ${p.stats}
     `,
       )
       .join('\n')}
@@ -39,8 +40,15 @@ export class IaService {
     - De esos 4, selecciona 1 que será el correcto para la adivinanza.
     - Crea una adivinanza basada en la información de ese Pokémon.
     - No menciones directamente su nombre.
-    - Devuelve la respuesta en formato JSON EXACTO con esta estructura:
-
+    
+    Instrucciones:
+  - Escoge 4 Pokémon de la lista provista (usa sus datos, no inventes).
+  - Selecciona Pokémon que tengan características similares (tipo, peso, altura, estadisticas).
+  - Entre esos 4, elige 1 como respuesta correcta.
+  - Genera una adivinanza basada en su descripción (tipo, peso, altura, estadisticas).
+  - La adivinanza debe ser ambigua, sin mencionar nombres ni pistas obvias.
+  - Aumenta la dificultad: haz que los otros 3 Pokémon también encajen parcialmente con la descripción, para que no sea evidente.
+  
     `;
 
     try {
