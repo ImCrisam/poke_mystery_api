@@ -1,13 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { CreatePokemonDto } from './dto/create-pokemon.dto';
+import { Inject, Injectable,  } from '@nestjs/common';
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { IaService } from '../ia/ia.service';
+import { v4 as uuidv4 } from 'uuid';
 const maxIdPokemon:number = 1024
 @Injectable()
 export class PokemonService {
 
-  constructor(private readonly http: HttpService, private readonly iaService:IaService) {}
+  constructor(
+    private readonly http: HttpService, 
+    private readonly iaService:IaService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
+  ) {}
   
 
   async CreateRiddle() {
@@ -31,8 +36,10 @@ export class PokemonService {
       };
     });
 
-    const responde = this.iaService.createPokemonRiddleFromList(pokemons);
-    
+    const responde =  await this.iaService.createPokemonRiddleFromList(pokemons);
+    const gameId = uuidv4();
+    console.log(responde)
+
     return 
   }
 
