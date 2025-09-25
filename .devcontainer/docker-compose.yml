@@ -1,5 +1,5 @@
 services:
-  nest-dev:
+  poke_mistery:
     build:
       context: .
       dockerfile: Dockerfile

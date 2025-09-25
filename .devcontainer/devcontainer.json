@@ -1,9 +1,9 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/postgres
 {
-	"name": "APIRest_ecommerce_roles_nest-js",
+	"name": "poke_mistery",
 	"dockerComposeFile": "docker-compose.yml",
-	"service": "nest-dev",
+	"service": "poke_mistery",
 	"workspaceFolder": "/workspaces",
 	"postCreateCommand": [],
 	"postAttachCommand": "",
