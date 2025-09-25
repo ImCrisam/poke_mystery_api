@@ -360,7 +360,7 @@
       "body": {
         "mode": "json",
         "parameter": [],
-        "raw": "{\r\n    \"gameId\":\"cac109bf-1b3e-44e3-9d07-f6bc2adffc2d\",\r\n    \"pokemonId\":304\r\n}",
+        "raw": "{\r\n    \"gameId\":\"6a6a56b0-6d33-4df0-8676-976e5aa224a1\",\r\n    \"pokemonId\":200\r\n}",
         "raw_parameter": [],
         "raw_schema": {
           "type": "object"

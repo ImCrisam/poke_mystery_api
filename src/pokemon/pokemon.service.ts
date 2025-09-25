@@ -46,12 +46,11 @@ export class PokemonService {
       await this.iaService.createPokemonRiddleFromList(pokemons);
     const gameId = uuidv4();
 
-    console.log(gameId);
     
     await this.gameStore.set(gameId, {
       answer: geminiData.answer,
     });
-    console.log(this.gameStore);
+
 
     
 
@@ -80,14 +79,12 @@ export class PokemonService {
 
   async validateAnswer(gameId: string, pokemonId: number) {
     const game = await this.gameStore.get(gameId);
-    console.log({store:game})
     
     if (!game) {
       throw new NotFoundException('Game not found or expired');
     }
 
     const correct = pokemonId === game.answer;
-    console.log({correct})
     return {
       gameId,
       selected: pokemonId,
