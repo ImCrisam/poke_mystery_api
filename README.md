@@ -1,98 +1,161 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# Poke Mystery API
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+API con dos endpoints que genera una adivinanza de un Pokémon aleatorio, ofreciendo opciones de respuesta y validación.
 
-## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Descripción
 
-## Project setup
+Proyecto desarrollado con **NestJS** y **TypeScript**, organizado bajo la estructura estándar de `src/` con módulos, controladores y servicios.  
+La API ofrece dos endpoints para generar acertijos de Pokémon aleatorios y validar respuestas.  
 
-```bash
-$ npm install
+Integra la [PokéAPI](https://pokeapi.co/) para obtener información de Pokémon y el SDK de [Google GenAI](https://googleapis.github.io/js-genai/release_docs/index.html) para crear los enunciados de las adivinanzas.  
+
+Adicionalmente, este repositorio incluye soporte para la extensión **EchoAPI** de VS Code, lo que permite guardar y versionar colecciones de ejemplos de peticiones HTTP directamente en el proyecto.
+
+## Requisitos
+
+- [Visual Studio Code](https://code.visualstudio.com/)  
+- [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)  
+- [Docker](https://www.docker.com/get-started/)  
+
+## Inicialización
+
+``` 
+git clone https://github.com/ImCrisam/poke_mystery_api.git && \
+cd poke_mystery_api && \
+code .
 ```
 
-## Compile and run the project
+## Configuración
 
-```bash
-# development
-$ npm run start
+1. Crear un archivo `.env` en la raíz del proyecto.  
+2. Tomar como referencia el archivo [`.env-template`](./.env-template) para definir las variables de entorno necesarias:  
+   - `PORT=3000` → Puerto en el que se expone la API.  
+   - `API_TOKEN=****` → **Obligatorio.** Clave de acceso que puedes obtener en [Google AI Studio](https://aistudio.google.com/app/api-keys).  
 
-# watch mode
-$ npm run start:dev
 
-# production mode
-$ npm run start:prod
+## Ejecución del proyecto
+
+- En **VS Code**, abre la paleta de comandos (`Ctrl`/`Cmd + Shift + P`) y selecciona:  
+  **Dev Containers: Rebuild and Reopen in Container**.  
+- La aplicación se iniciará automáticamente en modo *watch*, expuesta por defecto en el puerto **3000**.
+
+### Nota
+- Si prefieres ejecutarla manualmente, dentro del devcontainer puedes usar:  
+  ```
+  npm run start:dev
+  ```
+
+## Desarrollo con Devcontainer (VS Code)
+
+Este proyecto incluye un `./.devcontainer/Dockerfile` para trabajar en un entorno reproducible dentro de Docker usando VS Code.
+
+El contenedor:
+- Usa `node:24` con `/API_Pokemon_mistery` como directorio de trabajo.  
+- Crea un enlace simbólico en `/root/echoapi_for_vscode` hacia `/workspaces/echoapi` para guardar las colecciones de **EchoAPI** en el repositorio.  
+- Instala dependencias y prepara el arranque automático del proyecto.  
+
+
+## Endpoints disponibles
+
+### `GET /pokemon/riddle`
+Genera un nuevo acertijo de Pokémon.
+
+- Flujo:
+  1. Selecciona N Pokémon aleatorios desde la PokéAPI.
+  2. La IA (genai) genera el texto del acertijo y una lista de opciones (ids).
+  3. Se guarda la respuesta correcta en `GameStore` con un `gameId` (UUID).
+  4. Devuelve `gameId`, `riddle` y `options`.
+
+- Respuesta (esquema):
+```
+{
+  "gameId": "string",
+  "riddle": "string",
+  "options": [
+    {
+      "id": number,
+      "name": "string",
+      "height": number,
+      "weight": number,
+      "types": ["string", ...],
+      "sprite": "string | null",
+      "hp": number,
+      "attack": number,
+      "defense": number,
+      "specialAttack": number,
+      "specialDefense": number,
+      "speed": number
+    },
+
+  ]
+}
 ```
 
-## Run tests
+### `POST /pokemon/validate`
+Valida la respuesta enviada por el usuario.
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+- Body requerido:
+```
+{
+  "gameId": "string",
+  "pokemonId": number
+}
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+- Respuesta:
+```
+{
+  "gameId": "string",
+  "selected": number,
+  "correctAnswer": number,
+  "correct": boolean
+}
+```
+```
+- Errores:
+  - `404 Not Found Game not found or expired`.
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
-## Resources
+## Ejemplos con EchoAPI
 
-Check out a few resources that may come in handy when working with NestJS:
+En la barra lateral de VS Code encontrarás la extensión **EchoAPI**, que permite consultar y gestionar ejemplos de peticiones HTTP directamente desde el entorno de desarrollo.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Configuración del Devcontainer
 
-## Support
+- Consulta la [documentación oficial de Dev Containers](https://code.visualstudio.com/docs/devcontainers/attach-container) para más información sobre su uso.  
+- Si deseas personalizar el editor, puedes hacerlo en el archivo [`./.devcontainer/devcontainer.json`](./.devcontainer/devcontainer.json), dentro de la sección `customizations.vscode`.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-## Stay in touch
+## Construir y desplegar con Docker
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+El repo contiene un `./Dockerfile` multi-stage pensado para producción:
+
+- Stage `builder`: usa `node:20-alpine`, instala dependencias (`npm ci`), copia el código y ejecuta `npm run build`.
+- Stage `production`: también `node:20-alpine`, instala solo dependencias de producción (`npm ci --omit=dev`), copia `dist/` desde el builder y expone el puerto 3000.
+
+Comandos para construir localmente con docker:
+
+1) Construir la imagen localmente (etiqueta `poke-mystery-api:latest`):
+
+```bash
+docker build -t poke-mystery-api:latest .
+```
+
+2) Ejecutar la imagen localmente (mapear puerto 3000):
+
+```bash
+docker run --rm -p 3000:3000 \
+  -e NODE_ENV=production \
+  -e PORT=3000 \
+  poke-mystery-api:latest
+```
+Variables de entorno y secretos:
+
+- Para producción, no incluyas secretos en la imagen. Pásalos en `docker run -e API_TOKEN=value` o usa Docker secrets / orquestadores (Docker Swarm / Kubernetes).
+
 
 ## License
-
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
