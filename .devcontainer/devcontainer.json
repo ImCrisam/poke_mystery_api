@@ -27,7 +27,7 @@
 				"imgildev.vscode-nestjs-generator",
 				//-
 				"EchoAPI.echoapi-for-vscode",//echoapi postman
-				"ms-ossdata.vscode-pgsql",//db
+				"ms-azuretools.vscode-docker",
 				//-
 				"PKief.material-icon-theme",
 				"christian-kohler.npm-intellisense",
